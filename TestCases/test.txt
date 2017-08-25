@@ -1,0 +1,63 @@
+# hashes make comment blocks! Comment blocks must terminate with a semicolon
+See? This isn't even parsed! I can write 8-3 without the interpreter yelling
+at me! Now I'm going to stop and make a semicolon;
+
+{/announce=true,verbose=false,debug=false};
+
+72=:H:;
+101=:e:;
+108=:l:;
+111=:o:;
+44=:,:;
+32=: :;
+87=:W:;
+114=:r:;
+100=:d:;
+
+:H:";
+:e:";
+:l:"";
+:o:";
+:,:";
+: :";
+:W:";
+:o:";
+:r:";
+:l:";
+:d:";
+
+#makes a new line;
+{p};
+
+#What about calculations? I can do that too! {o} outputs the value
+ on the top of the postfix processing stack! Okay, maybe 333/106
+ isn't EXACTLY pi, but it's pretty hecking close. I don't feel like
+ adding in nth root support;
+(333/106=:pi:){o}{p};
+
+#Whoa did you see that? I approximated pi, assigned it to :pi:, and printed it!
+ Let's calculate the volume of a balloon with that!;
+ 
+#Ooh fancy, prefixing a statement with $ will print it without a new line at the end!;
+$Let the radius of my sphere be 15 inches!
+;
+
+15=:r:;
+$Radius = ; :r:{o}{p};
+
+
+4/3 * :pi: * :r: * :r: * :r: = :volume of my balloon:;
+
+$The volume of my balloon is ; 
+:volume of my balloon:{o};
+$ inches cubed!;{p};
+
+$That wasn't very accurate. Let's manually make pi 3.14159265358979;{p};
+3.14159265358979=:pi:;
+
+$Now let's take your input and find the volume of that sphere! Input a number: ;
+{i}=:r:;
+4/3 * :pi: * :r: * :r: * :r: = :volume of your balloon:;
+$The volume of your balloon is ; 
+:volume of your balloon:{o};
+$ inches cubed!;{p};
