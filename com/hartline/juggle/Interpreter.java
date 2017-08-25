@@ -100,6 +100,12 @@ public class Interpreter {
 						}
 						break;
 					}
+					case "^":{
+						double num2 = getValueOfOperand(operandStack, variableMap);
+						double num1 = getValueOfOperand(operandStack, variableMap);
+						
+						operandStack.push(new Operand(Math.pow(num1,num2)));
+					}
 					default:
 						break;
 						

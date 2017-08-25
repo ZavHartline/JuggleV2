@@ -20,6 +20,7 @@ public class Parser {
 	private static final int SLASH_PRECEDENCE = 5000;
 	private static final int ASSIGN_PRECEDENCE = 400;
 	private static final int INPUT_PRECEDENCE = 10000;
+	private static final int POWER_PRECEDENCE = 9000;
 	
 	private int lineCount = 1;
 	private boolean flagAnnouncements = false;
@@ -42,7 +43,9 @@ public class Parser {
 					continue;
 				}
 				
-				while(!operatorStack.isEmpty() && getPrecedence(operatorStack.peek()) >= getPrecedence(token)){
+				while(	!operatorStack.isEmpty() 
+						&& (getPrecedence(operatorStack.peek()) >= getPrecedence(token)
+						|| getPrecedence(operatorStack.peek()) > getPrecedence(token) && isRightToLeftAssociative(token))){
 					outputStack.push(operatorStack.pop());
 				}
 				
@@ -94,6 +97,15 @@ public class Parser {
 		
 		Main.interpreter.process(outputStack);
 		
+	}
+
+	private boolean isRightToLeftAssociative(String token) {
+		switch(token) {
+		case "^":
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	private boolean isStringOutput(String token) {
@@ -194,6 +206,8 @@ public class Parser {
 			return ASSIGN_PRECEDENCE;
 		case "{i}":
 			return INPUT_PRECEDENCE;
+		case "^":
+			return POWER_PRECEDENCE;
 		default:
 			return -1;
 		}
@@ -201,7 +215,7 @@ public class Parser {
 
 	public static boolean isOperator(String token) {
 		final int OPERATOR_LIST_START_INDEX = 2;
-		final int OPERATOR_LIST_END_INDEX = 11;
+		final int OPERATOR_LIST_END_INDEX = 12;
 		List<String> regex = FileHandler.regexList.subList(OPERATOR_LIST_START_INDEX, OPERATOR_LIST_END_INDEX);
 		
 		for(String s : regex) {

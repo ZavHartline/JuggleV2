@@ -2,8 +2,9 @@
 See? This isn't even parsed! I can write 8-3 without the interpreter yelling
 at me! Now I'm going to stop and make a semicolon;
 
+{/announce=true,verbose=false,debug=true};
+(2^.5=:b:){o};
 {/announce=true,verbose=false,debug=false};
-
 72=:H:;
 101=:e:;
 108=:l:;

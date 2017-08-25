@@ -19,7 +19,7 @@ public class FileHandler {
 	public static List<String> regexList = new ArrayList<String>() {{
 		
 		add("(:.*?:)");	// Group matches variables
-		add("((\\d+)?\\.\\d+|\\d+)");	// Group matches numbers
+		add("((\\d+)?\\.\\d+|\\d+)");	// Group matches number literals
 		add("(\\+)");	// Group matches add
 		add("(\\-)");	// Group matches sub
 		add("(\\*)");	// Group matches mult
@@ -29,10 +29,12 @@ public class FileHandler {
 		add("(\\{p\\})");//Group matches printVal with \n
 		add("(\\{i\\})");//Group matches pushInput
 		add("(=)");		// Group matches assignment
+		add("(\\^)");	// Group matches power symbol
 		add("(\\()");	// Group matches left parenthesis
 		add("(\\))");	// Group matches right parenthesis
 		add("(\\{/.*?\\})");// Group matches flags
-		add("(\\$[\\S\\s]+)");	//Group matches couts
+		add("(\\$[\\S\\s]+)");	//Group matches standard string output
+		
 	}};
 	
 	private final Path PATH;
