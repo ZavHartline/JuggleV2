@@ -57,7 +57,7 @@ $That wasn't very accurate. Let's manually make pi 3.14159265358979;{p};
 
 $Now let's take your input and find the volume of that sphere! Input a number: ;
 {i}=:r:;
-4/3 * :pi: * :r: * :r: * :r: = :volume of your balloon:;
+4/3 * :pi: * :r: ^ 3 = :volume of your balloon:;
 $The volume of your balloon is ; 
 :volume of your balloon:{o};
 $ inches cubed!;{p};

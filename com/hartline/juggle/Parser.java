@@ -22,7 +22,6 @@ public class Parser {
 	private static final int INPUT_PRECEDENCE = 10000;
 	private static final int POWER_PRECEDENCE = 9000;
 	
-	private int lineCount = 1;
 	private boolean flagAnnouncements = false;
 	
 	public void shuntingYard(List<String> tokens) {
@@ -66,7 +65,7 @@ public class Parser {
 				}
 				
 				if(operatorStack.isEmpty())
-					Main.errorHandler.send(new ParsingError(lineCount, "Mismatched parentheses", Severity.FATAL));
+					Main.errorHandler.send(new ParsingError(Main.interpreter.getLineCount(), "Mismatched parentheses", Severity.FATAL));
 				
 				operatorStack.pop();
 				continue;
@@ -79,16 +78,28 @@ public class Parser {
 			
 			if(isFlagset(token)) {
 				processFlagset(token);
+				continue;
 			}
 			
 			if(isStringOutput(token)) {
 				System.out.print(token.substring(1));
+				continue;
+			}
+			
+			if(isLabel(token)) {
+				outputStack.push(token);
+				continue;
+			}
+			
+			if(isGoto(token)) {
+				outputStack.push(token);
+				continue;
 			}
 			
 		}
 		while(!operatorStack.isEmpty()) {
 			if(operatorStack.peek().matches("\\(|\\)"))
-				Main.errorHandler.send(new ParsingError(lineCount, "Mismatched parentheses", Severity.FATAL));
+				Main.errorHandler.send(new ParsingError(Main.interpreter.getLineCount(), "Mismatched parentheses", Severity.FATAL));
 			outputStack.push(operatorStack.pop());
 		}
 		
@@ -131,7 +142,7 @@ public class Parser {
 			try {
 				value = s.split("\\s*=\\s*")[1];
 			}catch(ArrayIndexOutOfBoundsException e) {
-				Main.errorHandler.send(new ParsingError(lineCount, "Flag {"+flagName+"} has no parameter, skipping flag", Severity.WARN));
+				Main.errorHandler.send(new ParsingError(Main.interpreter.getLineCount(), "Flag {"+flagName+"} has no parameter, skipping flag", Severity.WARN));
 				continue;
 			}
 			
@@ -159,7 +170,7 @@ public class Parser {
 				break;
 			}
 			default:
-				Main.errorHandler.send(new ParsingError(lineCount, "Cannot identify flag {" + flagName + "}", Severity.WARN));
+				Main.errorHandler.send(new ParsingError(Main.interpreter.getLineCount(), "Cannot identify flag {" + flagName + "}", Severity.WARN));
 				continue;
 			}
 			
@@ -233,8 +244,11 @@ public class Parser {
 		return token.matches("(\\d+)?\\.\\d+|\\d+");
 	}
 
-	public void incrementLineCount() {
-		lineCount++;
+	public static boolean isLabel(String token) {
+		return token.matches("(label\\{.*?\\})");
+	}
+	public static boolean isGoto(String token) {
+		return token.matches("(goto\\{.*?\\})");
 	}
 	
 }

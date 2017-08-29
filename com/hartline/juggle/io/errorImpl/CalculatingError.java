@@ -3,9 +3,12 @@ import com.hartline.juggle.io.Error;
 import com.hartline.juggle.io.Error.ErrorType;;
 
 public class CalculatingError extends Error{
-
-	public CalculatingError(int position, String reasonText, Severity severity) {
-		pointOfError = position;
+	
+	private final int instructionPosition;
+	
+	public CalculatingError(int lineNumber, int instructionNumber, String reasonText, Severity severity) {
+		pointOfError = lineNumber;
+		instructionPosition = instructionNumber;
 		errorType = ErrorType.CALCULATION;
 		severityOfError = severity;
 		reason = reasonText;
@@ -14,9 +17,8 @@ public class CalculatingError extends Error{
 	@Override
 	public String getErrorMessage() {
 		
-		if(severityOfError != null)
-			return "[" + severityOfError + "] "+ getErrorType() + " - Instruction: " + pointOfError + " - Reason: " + reason;
-		return getErrorType() + " - Instruction: " + pointOfError + " - Reason: " + reason;
+		return "[" + severityOfError + "] "+ getErrorType() + " - Line: " + pointOfError + " - Instruction: " + instructionPosition + " - Reason: " + reason;
+		
 	}
 
 }

@@ -15,16 +15,23 @@ import com.hartline.juggle.io.errorImpl.CalculatingError;
 public class Interpreter {
 	
 	private Map<String, Double> variableMap;
+	
+	//Stores GOTO jump labels
+	private Map<String, Integer> labelMap;
+	
 	private Scanner scanner;
+
+	private int lineCount = 0;
+	private int instructionCount = 0;
 	
 	public Interpreter() {
 		variableMap = new HashMap<String, Double>();
+		labelMap = new HashMap<String, Integer>();
 		scanner = new Scanner(System.in);
 	}
 	
 	public void process(Stack<String> postfixStack) {
 		
-		int instructionCount = 0;
 		Stack<Operand> operandStack = new Stack<Operand>();
 		
 		List<String> inputTokens = new ArrayList<String>(postfixStack);
@@ -39,35 +46,51 @@ public class Interpreter {
 					variableMap.put(token, 0.0);
 				operandStack.push(new Operand(token));
 			}
+			
+			if(Parser.isLabel(token)) {
+				//Replace "label" with nothing to make the hash generic
+				labelMap.put(token.replaceFirst("label", ""), getLineCount());
+			}
+			if(Parser.isGoto(token)) {
+				//Replace "goto" with nothing to match the generic hash
+				token = token.replaceFirst("goto", "");
+				try {
+					forceLineCount(labelMap.get(token));
+				}catch(NullPointerException e) {
+					Main.errorHandler.send(new CalculatingError(getLineCount(), getInstructionCount(), "Could not find label " + token, Severity.FATAL));
+				}
+				return;
+			}
+			
 			if(Parser.isOperator(token)) {
 				
 				try {
 					switch(token) {
 					
 					case "+":{
-						double num1 = getValueOfOperand(operandStack, variableMap);
-						double num2 = getValueOfOperand(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(num1+num2));
 						break;
 					}
 					case "-":{
-						double num2 = getValueOfOperand(operandStack, variableMap);
-						double num1 = getValueOfOperand(operandStack, variableMap);
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(num1-num2));
 						break;
 					}
 					case "*":{
-						double num1 = getValueOfOperand(operandStack, variableMap);
-						double num2 = getValueOfOperand(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(num1*num2));
 						break;
 					}
 					case "/":{
-						double num2 = getValueOfOperand(operandStack, variableMap);
-						double num1 = getValueOfOperand(operandStack, variableMap);
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(num1/num2));
 						break;
@@ -97,12 +120,13 @@ public class Interpreter {
 						}catch(java.util.InputMismatchException e) {
 							/*This is here to allow a single statement of {i}
 							  to halt a program until next input*/
+							scanner = new Scanner(System.in);
 						}
 						break;
 					}
 					case "^":{
-						double num2 = getValueOfOperand(operandStack, variableMap);
-						double num1 = getValueOfOperand(operandStack, variableMap);
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(Math.pow(num1,num2)));
 					}
@@ -111,14 +135,16 @@ public class Interpreter {
 						
 					}
 				}catch(EmptyStackException e) {
-					Main.errorHandler.send(new CalculatingError(instructionCount, "Not enough operands.", Severity.FATAL));
+					Main.errorHandler.send(new CalculatingError(getLineCount(), getInstructionCount(), "Not enough operands.", Severity.FATAL));
 				}
 				
 			}
 			
-			instructionCount++;
+			incrementInstructionCount();
 			
 		}
+		resetInstructionCount();
+		incrementLineCount();
 		
 	}
 
@@ -127,17 +153,40 @@ public class Interpreter {
 			if(variableMap.containsKey(operandStack.peek().VARIABLE_NAME))
 				return variableMap.get(operandStack.peek().VARIABLE_NAME);
 			else
-				Main.errorHandler.send(new CalculatingError(-1, "Attempt to call nil", Severity.FATAL));
+				Main.errorHandler.send(new CalculatingError(getLineCount(), getInstructionCount(), "Attempt to call nil", Severity.FATAL));
 		return operandStack.peek().VALUE;
 	}
-
-	private double getValueOfOperand(Stack<Operand> operandStack, Map<String, Double> variableMap) {
+	
+	private double getValueOfOperandPop(Stack<Operand> operandStack, Map<String, Double> variableMap) {
 		if(operandStack.peek().VARIABLE_NAME != null)
 			if(variableMap.containsKey(operandStack.peek().VARIABLE_NAME))
 				return variableMap.get(operandStack.pop().VARIABLE_NAME);
 			else
-				Main.errorHandler.send(new CalculatingError(-1, "Attempt to call nil", Severity.FATAL));
+				Main.errorHandler.send(new CalculatingError(getLineCount(), getInstructionCount(), "Attempt to call nil", Severity.FATAL));
 		return operandStack.pop().VALUE;
 	}
+	
+	public int getLineCount() {
+		return lineCount;
+	}
+	
+	public void incrementLineCount() {
+		lineCount++;
+	}
+	
+	private void forceLineCount(int newLineNumber) {
+		lineCount = newLineNumber;
+	}
+	
+	private int getInstructionCount() {
+		return instructionCount;
+	}
 
+	private void resetInstructionCount() {
+		instructionCount = 0;
+	}
+
+	private void incrementInstructionCount() {
+		instructionCount++;
+	}
 }

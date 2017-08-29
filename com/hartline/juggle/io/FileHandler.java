@@ -34,7 +34,8 @@ public class FileHandler {
 		add("(\\))");	// Group matches right parenthesis
 		add("(\\{/.*?\\})");// Group matches flags
 		add("(\\$[\\S\\s]+)");	//Group matches standard string output
-		
+		add("(label\\{.*?\\})"); //Group matches GOTO labels
+		add("(goto\\{.*?\\})");	//Group matches GOTO{label}
 	}};
 	
 	private final Path PATH;
@@ -78,12 +79,18 @@ public class FileHandler {
 		
 		Pattern pattern = Pattern.compile(regex);
 		
-		int lineNumber = 1;
-		for(String line : textData.split(";")) {
+		Parser parser = new Parser();
+		
+		String[] lines = textData.split(";");
+		
+		for(int i = 0; i < lines.length; i = Main.interpreter.getLineCount()) {
 			
-			if(line.trim().startsWith("#"))
+			String line = lines[i];
+			
+			if(line.trim().startsWith("#")) {
+				Main.interpreter.incrementLineCount();
 				continue;
-			
+			}
 			Matcher matcher = pattern.matcher(line);
 			List<String> tokenList = new ArrayList<String>();
 			
@@ -93,14 +100,11 @@ public class FileHandler {
 			if(Main.getDebugMode()) {
 				System.err.println("");
 				System.err.println("LINE_CONTENT: " + line.trim());
-				System.err.println("LINE_NUMBER: " + lineNumber);
+				System.err.println("LINE_NUMBER: " + Main.interpreter.getLineCount());
 				System.err.println("TOKENLIST: " + tokenList);
 			}
 			
-			Parser parser = new Parser();
 			parser.shuntingYard(tokenList);
-			
-			parser.incrementLineCount();
 		}
 		
 	}
