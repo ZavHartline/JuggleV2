@@ -17,7 +17,7 @@ public class Interpreter {
 	private Map<String, Double> variableMap;
 	
 	//Stores GOTO jump labels
-	private Map<String, Integer> labelMap;
+	public Map<String, Integer> labelMap;
 	
 	private Scanner scanner;
 
@@ -47,10 +47,6 @@ public class Interpreter {
 				operandStack.push(new Operand(token));
 			}
 			
-			if(Parser.isLabel(token)) {
-				//Replace "label" with nothing to make the hash generic
-				labelMap.put(token.replaceFirst("label", ""), getLineCount());
-			}
 			if(Parser.isGoto(token)) {
 				//Replace "goto" with nothing to match the generic hash
 				token = token.replaceFirst("goto", "");
@@ -129,6 +125,17 @@ public class Interpreter {
 						double num1 = getValueOfOperandPop(operandStack, variableMap);
 						
 						operandStack.push(new Operand(Math.pow(num1,num2)));
+						break;
+					}
+					case "if":{
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						
+						//The conditional test fails, else interpret statement as normal
+						if(num1 != 0) {
+							incrementLineCount();
+							return;
+						}
+						break;
 					}
 					default:
 						break;

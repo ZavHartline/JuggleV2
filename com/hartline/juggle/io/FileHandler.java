@@ -30,12 +30,14 @@ public class FileHandler {
 		add("(\\{i\\})");//Group matches pushInput
 		add("(=)");		// Group matches assignment
 		add("(\\^)");	// Group matches power symbol
+		add("(if)");	// Group matches if conditional
 		add("(\\()");	// Group matches left parenthesis
 		add("(\\))");	// Group matches right parenthesis
 		add("(\\{/.*?\\})");// Group matches flags
 		add("(\\$[\\S\\s]+)");	//Group matches standard string output
 		add("(label\\{.*?\\})"); //Group matches GOTO labels
 		add("(goto\\{.*?\\})");	//Group matches GOTO{label}
+		
 	}};
 	
 	private final Path PATH;
@@ -83,17 +85,23 @@ public class FileHandler {
 		
 		String[] lines = textData.split(";");
 		
-		for(int i = 0; i < lines.length; i = Main.interpreter.getLineCount()) {
+		//Stores all of the tokenized text lines from the following loop
+		List<List<String>> tokenizedLineLists = new ArrayList<List<String>>();
+		
+		for(int i = 0; i < lines.length; ++i) {
 			
 			String line = lines[i];
 			
-			if(line.trim().startsWith("#")) {
-				Main.interpreter.incrementLineCount();
-				continue;
-			}
 			Matcher matcher = pattern.matcher(line);
 			List<String> tokenList = new ArrayList<String>();
 			
+			//if is comment
+			if(line.trim().startsWith("#")) {
+				tokenizedLineLists.add(tokenList);
+				continue;
+			}
+			
+			//Capture every matching regex group in regexList into the tokenList
 			while(matcher.find())
 				tokenList.add(matcher.group());
 			
@@ -104,7 +112,24 @@ public class FileHandler {
 				System.err.println("TOKENLIST: " + tokenList);
 			}
 			
+			//Automatically pre-scan for labels
+			for(String token : tokenList) {
+				if(Parser.isLabel(token)) {
+					//Replace "label" with nothing to make the hash generic
+					Main.interpreter.labelMap.put(token.replaceFirst("label", ""), i);
+				}
+			}
+			
+			tokenizedLineLists.add(tokenList);
+			
+		}
+		
+		//Process token lists
+		for(int i = 0; i < tokenizedLineLists.size(); i = Main.interpreter.getLineCount()) {
+			
+			List<String> tokenList = tokenizedLineLists.get(i);
 			parser.shuntingYard(tokenList);
+			
 		}
 		
 	}

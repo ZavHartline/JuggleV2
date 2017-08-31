@@ -26,8 +26,9 @@ label{factorial};
 	goto{factorial};
 
 label{end}
-	$Factorial result is ; :factorialReturn:{o}{p};
+	$Factorial result is ; :factorialReturn: {o} {p};
 	#Reset variables;
 	1 = :factorialReturn:;
 	
 	goto{main};
+	

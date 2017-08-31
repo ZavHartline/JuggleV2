@@ -1,7 +1,5 @@
 package com.hartline.juggle;
 
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
@@ -21,6 +19,7 @@ public class Parser {
 	private static final int ASSIGN_PRECEDENCE = 400;
 	private static final int INPUT_PRECEDENCE = 10000;
 	private static final int POWER_PRECEDENCE = 9000;
+	private static final int IF_PRECEDENCE = 9500;
 	
 	private boolean flagAnnouncements = false;
 	
@@ -83,11 +82,6 @@ public class Parser {
 			
 			if(isStringOutput(token)) {
 				System.out.print(token.substring(1));
-				continue;
-			}
-			
-			if(isLabel(token)) {
-				outputStack.push(token);
 				continue;
 			}
 			
@@ -219,6 +213,8 @@ public class Parser {
 			return INPUT_PRECEDENCE;
 		case "^":
 			return POWER_PRECEDENCE;
+		case "if":
+			return IF_PRECEDENCE;
 		default:
 			return -1;
 		}
@@ -226,7 +222,7 @@ public class Parser {
 
 	public static boolean isOperator(String token) {
 		final int OPERATOR_LIST_START_INDEX = 2;
-		final int OPERATOR_LIST_END_INDEX = 12;
+		final int OPERATOR_LIST_END_INDEX = 13;
 		List<String> regex = FileHandler.regexList.subList(OPERATOR_LIST_START_INDEX, OPERATOR_LIST_END_INDEX);
 		
 		for(String s : regex) {

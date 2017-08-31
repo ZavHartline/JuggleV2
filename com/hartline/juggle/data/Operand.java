@@ -20,4 +20,9 @@ public class Operand {
 		VALUE = value;
 	}
 	
+	@Override
+	public String toString() {
+		return "{" + VARIABLE_NAME +","+ VALUE + "}";
+	}
+	
 }
