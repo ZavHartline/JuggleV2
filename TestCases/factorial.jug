@@ -14,7 +14,7 @@ label{main};
 
 #Begin Factorial method;
 label{factorial};
-	(if(:factorialCountInitial:-:factorialCount:))
+	(if :factorialCount: < 1 & :factorialCount: > 0-1)
 		goto{end};
 	:factorialReturn: * :factorialCount: = :factorialReturn:;
 	:factorialCount: - 1 = :factorialCount:;

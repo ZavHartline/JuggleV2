@@ -130,11 +130,72 @@ public class Interpreter {
 					case "if":{
 						double num1 = getValueOfOperandPop(operandStack, variableMap);
 						
+						//Reduce num1 to its first integer equivalent bit
+						//This effectively makes the value boolean
+						int intVersionOfNum1 = (int) Math.round(num1);
+						intVersionOfNum1 = (intVersionOfNum1 << 63) >> 63;
+						
 						//The conditional test fails, else interpret statement as normal
-						if(num1 != 0) {
+						if(intVersionOfNum1 == 0) {
 							incrementLineCount();
 							return;
 						}
+						break;
+					}
+					case "<<":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = Math.round(num1) << Math.round(num2);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case ">>>":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = Math.round(num1) >>> Math.round(num2);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case ">>":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = Math.round(num1) >> Math.round(num2);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case "|":{
+
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = Math.round(num1) | Math.round(num2);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case "&":{ 
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = Math.round(num1) & Math.round(num2);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case "~":{
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = ~Math.round(num1);
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case "<":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = num1 < num2 ? 1 : 0;
+						operandStack.push(new Operand(result));
+						break;
+					}
+					case ">":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						long result = num1 > num2 ? 1 : 0;
+						operandStack.push(new Operand(result));
 						break;
 					}
 					default:

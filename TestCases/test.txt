@@ -1,33 +1,12 @@
-{/announce=false,debug=false};
+{/debug=false};
+{i}=:var:;
 
-#Initialize variables;
-	1 = :factorialReturn:;
+(if :var: > 5 & :var: < 7) goto{true};
+	$False; {p};
+	goto{end};
 
-label{main};
-	$Input a number to find the factorial of it: ;
+label{true};
+	$True;{p};
+	goto{end};
 	
-	#Square and then root input to force it to be positive;
-	{i}^2^.5 = :factorialCount:;
-	
-	:factorialCount: = :factorialCountInitial:;
-	goto{factorial};
-
-#Begin Factorial method;
-label{factorial};
-	(if(:factorialCountInitial:-:factorialCount:))
-		goto{end};
-	:factorialReturn: * :factorialCount: = :factorialReturn:;
-	:factorialCount: - 1 = :factorialCount:;
-	
-	#{p};
-	#:factorialReturn:{o};
-	#{p};
-	
-	goto{factorial};
-
-label{end}
-	$Factorial result is ; :factorialReturn:{o}{p};
-	#Reset variables;
-	1 = :factorialReturn:;
-	
-	goto{main};
+label{end};

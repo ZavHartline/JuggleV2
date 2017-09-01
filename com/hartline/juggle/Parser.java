@@ -19,7 +19,15 @@ public class Parser {
 	private static final int ASSIGN_PRECEDENCE = 400;
 	private static final int INPUT_PRECEDENCE = 10000;
 	private static final int POWER_PRECEDENCE = 9000;
-	private static final int IF_PRECEDENCE = 9500;
+	private static final int IF_PRECEDENCE = 400;
+	private static final int BIT_LEFT_SHIFT_SIGNED = 900;
+	private static final int BIT_RIGHT_SHIFT_SIGNED = 900;
+	private static final int BIT_RIGHT_SHIFT_UNSIGNED = 900;
+	private static final int BIT_OR = 700;
+	private static final int BIT_AND = 700;
+	private static final int BIT_NEGATE = 700;
+	private static final int LESS_THAN = 800;
+	private static final int GREATER_THAN = 800;
 	
 	private boolean flagAnnouncements = false;
 	
@@ -107,6 +115,9 @@ public class Parser {
 	private boolean isRightToLeftAssociative(String token) {
 		switch(token) {
 		case "^":
+		case "<<":
+		case ">>>":
+		case ">>":
 			return true;
 		default:
 			return false;
@@ -215,6 +226,23 @@ public class Parser {
 			return POWER_PRECEDENCE;
 		case "if":
 			return IF_PRECEDENCE;
+		case "<<":
+			return BIT_LEFT_SHIFT_SIGNED;
+		case ">>>":
+			return BIT_RIGHT_SHIFT_UNSIGNED;
+		case ">>":
+			return BIT_RIGHT_SHIFT_SIGNED;
+		case "|":
+			return BIT_OR;
+		case "&":
+			return BIT_AND;
+		case "~":
+			return BIT_NEGATE;
+		case "<":
+			return LESS_THAN;
+		case ">":
+			return GREATER_THAN;
+			
 		default:
 			return -1;
 		}
@@ -222,7 +250,7 @@ public class Parser {
 
 	public static boolean isOperator(String token) {
 		final int OPERATOR_LIST_START_INDEX = 2;
-		final int OPERATOR_LIST_END_INDEX = 13;
+		final int OPERATOR_LIST_END_INDEX = 21;
 		List<String> regex = FileHandler.regexList.subList(OPERATOR_LIST_START_INDEX, OPERATOR_LIST_END_INDEX);
 		
 		for(String s : regex) {

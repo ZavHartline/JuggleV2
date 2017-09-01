@@ -31,6 +31,14 @@ public class FileHandler {
 		add("(=)");		// Group matches assignment
 		add("(\\^)");	// Group matches power symbol
 		add("(if)");	// Group matches if conditional
+		add("(<<)");	// Group matches left bit shift
+		add("(>>>)");	// Group matches unsigned right bit shift
+		add("(>>)");	// Group matches signed right bit shift
+		add("(\\|)");	// Group matches bitwise OR
+		add("(&)");		// Group matches bitwise AND
+		add("(~)");		// Group matches bitwise NEGATE
+		add("(<)");		// Group matches boolean LESS_THAN
+		add("(>)");		// Group matches boolean GREATER_THAN
 		add("(\\()");	// Group matches left parenthesis
 		add("(\\))");	// Group matches right parenthesis
 		add("(\\{/.*?\\})");// Group matches flags
