@@ -24,6 +24,7 @@ public class FileHandler {
 		add("(\\-)");	// Group matches sub
 		add("(\\*)");	// Group matches mult
 		add("(/)");		// Group matches div
+		add("(%)");		// Group matches modulus
 		add("(\")");	// Group matches printChar no \n
 		add("(\\{o\\})");//Group matches printVal no \n
 		add("(\\{p\\})");//Group matches printVal with \n
@@ -134,10 +135,8 @@ public class FileHandler {
 		
 		//Process token lists
 		for(int i = 0; i < tokenizedLineLists.size(); i = Main.interpreter.getLineCount()) {
-			
 			List<String> tokenList = tokenizedLineLists.get(i);
 			parser.shuntingYard(tokenList);
-			
 		}
 		
 	}

@@ -91,6 +91,13 @@ public class Interpreter {
 						operandStack.push(new Operand(num1/num2));
 						break;
 					}
+					case "%":{
+						double num2 = getValueOfOperandPop(operandStack, variableMap);
+						double num1 = getValueOfOperandPop(operandStack, variableMap);
+						
+						operandStack.push(new Operand(num1%num2));
+						break;
+					}
 					case "{o}":{
 						System.out.print(getValueOfNextOperandPeek(operandStack, variableMap));
 						break;
@@ -105,8 +112,12 @@ public class Interpreter {
 					}
 					case "=":{
 						String variableName = operandStack.pop().VARIABLE_NAME;
-						double value = operandStack.peek().VALUE;
+						double value = getValueOfNextOperandPeek(operandStack, variableMap);
 						variableMap.put(variableName, value);
+						
+						if(Main.getDebugMode())
+							System.err.printf("INTERPRETER: Assigning %f to %s\n", value, variableName);
+						
 						break;
 						
 					}

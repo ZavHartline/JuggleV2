@@ -1,5 +1,7 @@
 package com.hartline.juggle;
 
+import java.text.SimpleDateFormat;
+
 import com.hartline.juggle.io.Error.Severity;
 import com.hartline.juggle.io.ErrorHandler;
 import com.hartline.juggle.io.FileHandler;
@@ -10,10 +12,13 @@ public class Main {
 	public static ErrorHandler errorHandler = null;
 	public static FileHandler mainFileHandler = null;
 	public static Interpreter interpreter = null;
-	private static boolean debugMode = false;;
+	private static boolean debugMode = false;
+	private static boolean timerMode = false;
+	public static final long TIME_OF_START;
 	
 	static {
 		
+		TIME_OF_START = System.nanoTime();
 		errorHandler = new ErrorHandler();
 		interpreter = new Interpreter();
 		
@@ -33,6 +38,16 @@ public class Main {
 			tokenizeTextData();
 		}};
 		
+		if(getTimerMode()) {
+			long currentTime = System.nanoTime();
+			long duration = (currentTime - TIME_OF_START) / (long)1e6;
+			long ms = (duration % 1000) / 100;
+			long seconds = (duration / 1000) % 60;
+			long minutes = (duration / (1000 * 60)) % 60;
+			long hours = (duration / (1000 * 60 * 60)) % 24;
+			System.out.printf("Execution time: %02d:%02d:%02d.%d\n", hours, minutes, seconds, ms);
+		}
+		
 		System.out.println();
 		
 	}
@@ -47,4 +62,13 @@ public class Main {
 		return debugMode;
 	}
 	
+	public static void enableTimerMode() {
+		timerMode  = true;
+	}
+	public static void disableTimerMode() {
+		timerMode = false;
+	}
+	public static boolean getTimerMode() {
+		return timerMode;
+	}
 }

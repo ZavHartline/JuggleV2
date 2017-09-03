@@ -15,6 +15,7 @@ public class Parser {
 	private static final int PLUS_PRECEDENCE = 1000;
 	private static final int MINUS_PRECEDENCE = 1000;
 	private static final int STAR_PRECEDENCE = 5000;
+	private static final int MODULUS_PRECEDENCE = 5000;
 	private static final int SLASH_PRECEDENCE = 5000;
 	private static final int ASSIGN_PRECEDENCE = 400;
 	private static final int INPUT_PRECEDENCE = 10000;
@@ -174,6 +175,13 @@ public class Parser {
 					disableFlagAnnouncements();
 				break;
 			}
+			case "timer":{
+				if(Boolean.parseBoolean(value))
+					Main.enableTimerMode();
+				else
+					Main.disableTimerMode();
+				break;
+			}
 			default:
 				Main.errorHandler.send(new ParsingError(Main.interpreter.getLineCount(), "Cannot identify flag {" + flagName + "}", Severity.WARN));
 				continue;
@@ -218,6 +226,8 @@ public class Parser {
 			return PRINT_WITH_NEW_LINE_PRECEDENCE;
 		case "\"":
 			return PRINT_CHARACTER_PRECEDENCE;
+		case "%":
+			return MODULUS_PRECEDENCE;
 		case "=":
 			return ASSIGN_PRECEDENCE;
 		case "{i}":
@@ -250,7 +260,7 @@ public class Parser {
 
 	public static boolean isOperator(String token) {
 		final int OPERATOR_LIST_START_INDEX = 2;
-		final int OPERATOR_LIST_END_INDEX = 21;
+		final int OPERATOR_LIST_END_INDEX = 22;
 		List<String> regex = FileHandler.regexList.subList(OPERATOR_LIST_START_INDEX, OPERATOR_LIST_END_INDEX);
 		
 		for(String s : regex) {
