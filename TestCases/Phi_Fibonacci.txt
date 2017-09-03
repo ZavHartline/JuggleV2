@@ -1,0 +1,13 @@
+{/timer=true,debug=false};
+#Golden Ratio;
+(1+5^.5)/2 = :phi:;
+{i} = :n:;
+
+#Approximate the fib value;
+:phi:^:n: / 5^.5 = :roundInput:;
+
+label{round};
+	# Java does implicit integer rounding on negate;
+	:roundInput:~~ = :roundOutput:;
+
+:roundOutput: {o}{p};
